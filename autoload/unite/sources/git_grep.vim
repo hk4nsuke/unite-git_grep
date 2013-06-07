@@ -39,7 +39,8 @@ function! unite#sources#git_grep#check()"{{{
 endfunction"}}}
 
 function! unite#sources#git_grep#grep(input)"{{{
-	let l:result = unite#util#system('git grep -n ' . a:input)
+	let l:result = unite#util#system('git grep -H -n ' . a:input)
+	let l:pwd = unite#util#system('pwd')
 	let l:matches = split(l:result, '\r\n\|\r\|\n')
   let l:entries = map(l:matches, '[v:val, split(v:val, ":")]')
   return map(l:entries,
@@ -47,7 +48,7 @@ function! unite#sources#git_grep#grep(input)"{{{
     \   "word": v:val[0],
     \   "source": "vcs_grep/git",
     \   "kind": "jump_list",
-    \   "action__path": v:val[1][0],
+    \   "action__path": strpart(l:pwd, 0, strlen(l:pwd)-1) . "/" . v:val[1][0],
     \   "action__line": v:val[1][1],
     \   "action__text": join(v:val[1][2:], ":"),
     \ }')
